@@ -1,0 +1,315 @@
+@if (input() && !input().hidden) {
+<div class="form-control w-full mb-3">
+  <!-- label -->
+
+  @if (input().label && input().type !== INPUT_TYPE.checkbox) {
+  <label class="label">
+    <span class="label-text">
+      {{ input().label }}
+      @if (input().required) {
+      <span class="text-red-500">*</span>
+      }
+    </span>
+  </label>
+  }
+
+  <!-- Switch what type of input to render -->
+
+  @switch (input().type) {
+
+  <!-- text -->
+
+  @case (INPUT_TYPE.text) {
+  <input
+    type="text"
+    [placeholder]="input().placeholder || ''"
+    class="input input-bordered w-full"
+    [formControl]="inputControl" />
+  }
+
+  <!-- password -->
+
+  @case (INPUT_TYPE.password) {
+  <div class="relative">
+    <input
+      [type]="passwordVisible() ? 'text' : 'password'"
+      [placeholder]="input().placeholder || ''"
+      class="input input-bordered w-full"
+      [formControl]="inputControl" />
+    <button
+      class="btn absolute bg-transparent top-1 right-1 bottom-1 h-auto min-h-[auto] border-none shadow-none"
+      type="button"
+      tabindex="-1"
+      (click)="passwordVisible.set(!passwordVisible())">
+      <ng-icon
+        [name]="passwordVisible() ? 'eye' : 'eyeClose'"
+        size="24"></ng-icon>
+    </button>
+  </div>
+  }
+
+  <!-- textarea -->
+
+  @case (INPUT_TYPE.textarea) {
+  <textarea
+    [placeholder]="input().placeholder || ''"
+    class="textarea textarea-bordered w-full"
+    rows="5"
+    [formControl]="inputControl"></textarea>
+  }
+
+  <!-- number -->
+
+  @case (INPUT_TYPE.number) {
+
+  <input
+    type="number"
+    [placeholder]="input().placeholder || ''"
+    class="input input-bordered w-full"
+    [formControl]="inputControl"
+    onwheel="this.blur()" />
+  }
+
+  <!-- date -->
+
+  @case (INPUT_TYPE.date) {
+  <input
+    type="date"
+    [placeholder]="input().placeholder || ''"
+    [min]="input().minDate"
+    [max]="input().maxDate"
+    class="input input-bordered w-full"
+    [formControl]="inputControl" />
+  }
+
+  <!-- week -->
+
+  @case (INPUT_TYPE.week) {
+
+  <input
+    type="week"
+    [placeholder]="input().placeholder || ''"
+    class="input input-bordered w-full"
+    [min]="input().minDate"
+    [max]="input().maxDate"
+    [formControl]="inputControl" />
+  }
+
+  <!-- checkbox -->
+
+  @case (INPUT_TYPE.checkbox) {
+
+  <label class="flex items-center cursor-pointer">
+    <input
+      [formControl]="inputControl"
+      type="checkbox"
+      checked="checked"
+      class="checkbox mr-3" />
+    <span class="label-text">{{ input().label }}</span>
+  </label>
+  }
+
+  <!-- select -->
+
+  @case (INPUT_TYPE.select) {
+  <ng-select
+    [formControl]="inputControl"
+    [items]="options()"
+    [bindLabel]="input().optionLabel || 'name'"
+    [bindValue]="input().optionValue || 'id'"
+    [clearable]="!input().required"
+    [searchFn]="searchFn.bind(this)"
+    class="join-item w-full"
+    appendTo="body">
+    @if (input().optionValue && input().optionLabel) {
+    <ng-template ng-label-tmp let-item="item" let-index="index">
+      <span class="text-xs opacity-70 mr-2">{{
+        item[input().optionValue!]
+      }}</span>
+      <span>{{ item[input().optionLabel!] }}</span>
+    </ng-template>
+    } @if (input().optionValue && input().optionLabel) {
+    <ng-template ng-option-tmp let-item="item" let-index="index">
+      <div>{{ item[input().optionLabel!] }}</div>
+      <div class="text-xs opacity-70">{{ item[input().optionValue!] }}</div>
+    </ng-template>
+    }
+  </ng-select>
+  } @case (INPUT_TYPE.multiselect) {
+  <ng-select
+    [formControl]="inputControl"
+    [items]="options()"
+    [multiple]="true"
+    [bindLabel]="input().optionLabel || 'name'"
+    [bindValue]="input().optionValue || 'id'"
+    [searchFn]="searchFn.bind(this)"
+    class="join-item w-full"
+    appendTo="body">
+  </ng-select>
+  }
+
+  <!-- lookup -->
+
+  @case (INPUT_TYPE.lookup) {
+
+  <div class="join">
+    <ng-select
+      [formControl]="inputControl"
+      [clearable]="!input().required"
+      [items]="options()"
+      [bindLabel]="input().optionLabel || 'name'"
+      [bindValue]="input().optionValue || 'id'"
+      [searchFn]="searchFn.bind(this)"
+      class="join-item w-full"
+      appendTo="body">
+    </ng-select>
+    <button
+      (click)="isLookupModalOpen.set(true)"
+      type="button"
+      aria-label="More"
+      class="btn join-item px-1">
+      <ng-icon name="more" size="25" />
+    </button>
+  </div>
+
+  <!-- Look up modal -->
+
+  <btp-modal
+    [title]="'Select value'"
+    boxClass="max-w-5xl"
+    [open]="isLookupModalOpen()"
+    (openChange)="isLookupModalOpen.set($event)">
+    <p>my content</p>
+    <p>my content</p>
+    <p>my content</p>
+    <p>my content</p>
+    <p>my content</p>
+    <p>my content</p>
+    <p>my content</p>
+    <p>my content</p>
+    <p>my content</p>
+    <p>my content</p>
+  </btp-modal>
+
+  <btp-modal
+    [title]="'Select user'"
+    boxClass="max-w-xl"
+    [open]="isUserModalOpen()"
+    (openChange)="isUserModalOpen.set($event)">
+    <input
+      type="text"
+      placeholder="Search user"
+      class="input input-bordered w-full my-5" />
+    <div class="h-72 relative">
+      <div
+        class="flex items-center gap-4 p-4 hover:bg-primary/20 rounded-lg cursor-pointer">
+        <img
+          class="w-12 h-12 rounded-full"
+          src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=80" />
+        <div class="flex flex-col">
+          <span class="dark:text-white text-black font-bold"
+            >Andrew Alfred</span
+          >
+          <span class="text-slate-500 text-sm dark:text-slate-400"
+            >Technical advisor</span
+          >
+        </div>
+      </div>
+      <div
+        class="flex items-center gap-4 p-4 hover:bg-primary/20 rounded-lg cursor-pointer">
+        <img
+          class="w-12 h-12 rounded-full"
+          src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=80" />
+        <div class="flex flex-col">
+          <span class="dark:text-white text-black font-bold"
+            >Debra Houston</span
+          >
+          <span class="text-slate-500 text-sm dark:text-slate-400"
+            >Analyst</span
+          >
+        </div>
+      </div>
+      <div
+        class="flex items-center gap-4 p-4 hover:bg-primary/20 rounded-lg cursor-pointer">
+        <img
+          class="w-12 h-12 rounded-full"
+          src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=80" />
+        <div class="flex flex-col">
+          <span class="dark:text-white text-black font-bold">Jane White</span>
+          <span class="text-slate-500 text-sm dark:text-slate-400"
+            >Director, Marketing</span
+          >
+        </div>
+      </div>
+      <div
+        class="flex items-center gap-4 p-4 hover:bg-primary/20 rounded-lg cursor-pointer">
+        <img
+          class="w-12 h-12 rounded-full"
+          src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=80" />
+        <div class="flex flex-col">
+          <span class="dark:text-white text-black font-bold">Ray Flint</span>
+          <span class="text-slate-500 text-sm dark:text-slate-400"
+            >Technical Advisor</span
+          >
+        </div>
+      </div>
+    </div>
+  </btp-modal>
+  }
+
+  <!-- groups -->
+
+  @case (INPUT_TYPE.userGroup) {
+
+  <div class="flex align-bottom">
+    <div class="avatar-group -space-x-3">
+      <div class="avatar">
+        <div class="w-12">
+          <img src="/assets/users/user.jpg" alt="User" />
+        </div>
+      </div>
+      <div class="avatar">
+        <div class="w-12">
+          <img src="/assets/users/user.jpg" alt="User" />
+        </div>
+      </div>
+      <div class="avatar">
+        <div class="w-12">
+          <img src="/assets/users/user.jpg" alt="User" />
+        </div>
+      </div>
+      <div class="avatar">
+        <div class="w-12">
+          <img src="/assets/users/user.jpg" alt="User" />
+        </div>
+      </div>
+      <div class="avatar placeholder">
+        <button class="w-12 btn">
+          <span>+10</span>
+        </button>
+      </div>
+    </div>
+    <button
+      (click)="isUserModalOpen.set(true)"
+      class="btn btn-circle btn-outline border-2 border-black/20 dark:border-white/10 border-dashed">
+      <ng-icon name="add" size="24"></ng-icon>
+    </button>
+  </div>
+  }
+
+  <!-- switch end -->
+  }
+
+  <!-- Validation error message -->
+
+  @if (inputControl.errors && inputControl.touched) {
+  <label class="label">
+    @if (inputControl.getError('required')) {
+    <span class="label-text-alt text-error"
+      >{{ input().label || input().placeholder }} is required</span
+    >
+    }
+  </label>
+  }
+</div>
+}

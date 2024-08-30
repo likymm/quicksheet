@@ -1,0 +1,368 @@
+<ng-template transloco let-t>
+  @if (loading()) {
+
+  <div class="flex justify-between mb-5">
+    <div class="w-5/12">
+      <div class="skeleton h-10 w-1/2 mb-2"></div>
+      <div class="grid grid-cols-5 gap-4 w-full">
+        @for (item of [].constructor(5); track $index) {
+        <div class="skeleton h-8 w-full"></div>
+        }
+      </div>
+    </div>
+  </div>
+
+  } @else if(timesheetHeader()) {
+
+  <div class="md:flex justify-between mb-5">
+    <div>
+      <div class="flex items-center mb-3">
+        <h1 class="text-3xl font-bold text-black dark:text-white">
+          {{
+            timesheetHeader()!.TMPeriodStartDate
+              | date : 'dd MMM' : undefined : locale()
+          }}
+          -
+          {{
+            timesheetHeader()!.TMPeriodEndDate
+              | date : 'dd MMM' : undefined : locale()
+          }}
+        </h1>
+
+        <div class="flex flex-col px-5">
+          <span class="text-xl flex items-center">
+            <ng-icon name="time" size="24" class="mr-1"></ng-icon>
+            <span>
+              {{ timesheetHeader()!.TMTotalHours | decimalTimeFormat }}
+              hrs</span
+            >
+          </span>
+          <progress
+            class="progress !w-full"
+            [attr.value]="timesheetHeader()!.TMTotalHours"
+            max="40"></progress>
+        </div>
+
+        <span
+          class="badge badge-outline"
+          [class]="timesheetHeader()!.Status | statusBG"
+          >{{ timesheetHeader()!.Status }}</span
+        >
+      </div>
+
+      <div class="flex items-center space-x-5 flex-wrap">
+        <div class="join">
+          <div class="tooltip" [attr.data-tip]="t('sys.prev')">
+            <button
+              (click)="onPrevious()"
+              class="btn btn-neutral join-item btn-sm"
+              type="button"
+              aria-label="previous">
+              <ng-icon name="arrowLeft" size="26"></ng-icon>
+            </button>
+          </div>
+          <div class="tooltip" [attr.data-tip]="t('sys.next')">
+            <button
+              (click)="onNext()"
+              class="btn btn-neutral join-item btn-sm"
+              type="button"
+              aria-label="next">
+              <ng-icon name="arrowRight" size="26"></ng-icon>
+            </button>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="btn btn-neutral btn-sm"
+          (click)="onGoToTodaysWeek()">
+          {{ t('sys.goToCurrentWeek') }}
+        </button>
+        <div class="dropdown dropdown-end">
+          <button
+            tabindex="0"
+            type="button"
+            [attr.aria-label]="t('sys.view')"
+            class="btn btn-neutral px-3 btn-sm">
+            {{ t('sys.view') + ':' }}
+            <span class="capitalize">{{ weekView() }}</span>
+            <ng-icon name="arrowDown" size="24"></ng-icon>
+          </button>
+          <ul
+            tabindex="0"
+            class="mt-3 z-[1] p-2 shadow-2xl menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
+            <li>
+              <a (click)="onViewIn('weekdays')" class="flex justify-between">
+                <span>{{ t('sys.weekdays') }}</span>
+                @if (weekView() === 'weekdays') {
+                <ng-icon name="check" size="20"></ng-icon>
+                }</a
+              >
+            </li>
+            <li>
+              <a (click)="onViewIn('week')" class="flex justify-between">
+                <span>{{ t('sys.week') }}</span>
+                @if (weekView() === 'week') {
+                <ng-icon name="check" size="20"></ng-icon>
+                }</a
+              >
+            </li>
+            <li>
+              <a (click)="onViewIn('daily')" class="flex justify-between">
+                <span>{{ t('sys.daily') }}</span>
+                @if (weekView() === 'daily') {
+                <ng-icon name="check" size="20"></ng-icon>
+                }
+              </a>
+            </li>
+            <li>
+              <a (click)="onViewIn('report')" class="flex justify-between">
+                <span>{{ t('sys.report') }}</span>
+                @if (weekView() === 'report') {
+                <ng-icon name="check" size="20"></ng-icon>
+                }</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        @if (!isApproving()) {
+
+        <div class="dropdown dropdown-end">
+          <button
+            tabindex="0"
+            type="button"
+            [attr.aria-label]="t('sys.template')"
+            class="btn btn-neutral px-3 btn-sm">
+            {{ t('sys.template') }}
+            <ng-icon name="arrowDown" size="24"></ng-icon>
+          </button>
+          <ul
+            tabindex="0"
+            class="mt-3 z-[1] p-2 shadow-2xl menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
+            <!---->
+
+            @for (template of templates(); track template.TMHeaderID) {
+            <li>
+              <a
+                class="flex justify-between group"
+                [ngClass]="{
+                  '!cursor-default': !canEdit()
+                }">
+                <div
+                  class="grow flex items-center"
+                  (click)="onUseTemplate(template)">
+                  <ng-icon
+                    name="templateFile"
+                    size="24"
+                    class="mr-2 opacity-50 shrink-0"></ng-icon>
+                  <div>
+                    {{ template.TMHeaderDescription || '...' }}
+                  </div>
+                </div>
+                <button
+                  (click)="onDeleteTemplate(template)"
+                  type="button"
+                  class="btn btn-sm !px-1 invisible group-hover:visible absolute right-0">
+                  <ng-icon name="deleteIcon" size="24"></ng-icon>
+                </button>
+              </a>
+            </li>
+            } @empty {
+            <img
+              src="../../../../assets/svg/template.svg"
+              class="max-w-28 mx-auto mt-8"
+              alt="template" />
+            <p class="py-5 text-center">{{ t('msg.noTemplateYet') }}</p>
+            }
+
+            <!---->
+            @if (timesheets()?.length) {
+
+            <div class="divider"></div>
+
+            <p class="mb-3">{{ t('msg.addAsTemplate') }}</p>
+            @if (isAddingAsTemplate()) {
+            <form
+              [formGroup]="templateForm"
+              class="w-full"
+              (submit)="onAddTemplate()">
+              <label class="form-control w-full mb-3">
+                <div class="label">
+                  <span class="label-text">{{ t('sys.name') }}</span>
+                </div>
+                <input
+                  #templateDescriptionInput
+                  formControlName="description"
+                  type="text"
+                  class="input input-bordered" />
+              </label>
+            </form>
+            }
+
+            <!---->
+
+            <button (click)="onAddTemplate()" class="btn btn-primary mb-3">
+              {{ t('sys.addNewTemplate') }}
+            </button>
+
+            }
+
+            <!---->
+          </ul>
+        </div>
+        }
+
+        <div class="dropdown dropdown-end">
+          <button
+            tabindex="0"
+            type="button"
+            [attr.aria-label]="t('sys.view')"
+            class="btn btn-neutral px-3 btn-sm">
+            <ng-icon name="excel" size="24"></ng-icon>
+            <span>{{ t('sys.document') }}</span>
+            <ng-icon name="arrowDown" size="24"></ng-icon>
+          </button>
+          <ul
+            tabindex="0"
+            class="mt-3 z-[1] p-2 shadow-2xl menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
+            <li>
+              <label
+                [ngClass]="{
+                  'opacity-50 !cursor-default pointer-events-none':
+                    timesheets()?.length
+                }">
+                <ng-icon name="upload" size="24"></ng-icon>
+                <span>{{ t('sys.import') }}</span>
+                <input
+                  type="file"
+                  class="hidden"
+                  #uploadTimesheetInput
+                  (change)="onFileSelected($event)" />
+              </label>
+            </li>
+            <li>
+              <a
+                (click)="onDownload()"
+                [ngClass]="{
+                  'opacity-50 !cursor-default pointer-events-none':
+                    !timesheets()?.length
+                }">
+                <ng-icon name="download" size="24"></ng-icon>
+                <span>{{ t('sys.export') }}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center">
+      @if (!isFormDisabled() && !isApproving()) {
+      <!---->
+      @if (!isApproved()) {
+      <button
+        (click)="onDelete()"
+        class="btn btn-neutral mr-3"
+        type="button"
+        [attr.aria-label]="t('sys.delete')">
+        <ng-icon name="deleteIcon" size="26"></ng-icon>
+        {{ t('sys.delete') }}
+      </button>
+      }
+      <!---->
+      @if (canEdit() && !isApproved() && !isApproving()) {
+      <button
+        (click)="onSubmit()"
+        type="button"
+        class="btn btn-primary mr-3"
+        role="button"
+        [attr.aria-label]="t('sys.submit')">
+        <ng-icon name="mail" size="26"></ng-icon>
+        {{ t('sys.submit') }}
+      </button>
+      }
+      <!---->
+      }
+      <!---->
+      @if (isSubmitted() && !isApproving() && isCurrentUsersTimesheet()) {
+      <button
+        (click)="onRecall()"
+        type="button"
+        class="btn btn-warning mr-3"
+        role="button"
+        [attr.aria-label]="t('sys.recall')">
+        <ng-icon name="arrowBack" size="26"></ng-icon>
+        {{ t('sys.recall') }}
+      </button>
+      }
+
+      <!---->
+      @if (isManager() && !isReviewing() && isSubmitted()) {
+      <button
+        (click)="onStartReview()"
+        type="button"
+        class="btn btn-primary mr-3"
+        role="button"
+        [attr.aria-label]="t('sys.startReview')">
+        <ng-icon name="searchEye" size="26"></ng-icon>
+        {{ t('sys.startReview') }}
+      </button>
+      }
+
+      <!---->
+      @if (isApproving()) {
+
+      <!---->
+      @if (canBeApproved()) {
+      <button (click)="onApprove()" type="button" class="btn btn-primary mr-3">
+        <ng-icon name="checkDouble" size="26"></ng-icon>
+        {{ t('sys.approve') }}
+      </button>
+      }
+
+      <!---->
+
+      <div class="dropdown dropdown-end mr-3">
+        <div tabindex="0" role="button" class="btn">
+          <ng-icon name="arrowBack" size="26"></ng-icon>
+          {{ t('sys.return') }}
+        </div>
+        <div
+          tabindex="0"
+          class="dropdown-content z-[1] card card-compact w-72 p-2 shadow-lg bg-base-100">
+          <div class="card-body">
+            <label class="form-control w-full max-w-xs">
+              <div class="label">
+                <span class="label-text">{{ t('sys.remarks') }}</span>
+              </div>
+              <textarea
+                [formControl]="remarksInput"
+                type="text"
+                class="textarea textarea-bordered"
+                rows="3"></textarea>
+            </label>
+            <button (click)="onRejectTimesheet()" type="button" class="btn">
+              {{ t('sys.proceedReturn') }}
+            </button>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  }
+
+  <btp-modal
+    [open]="isDeleteTemplateModalOpen()"
+    (openChange)="isDeleteTemplateModalOpen.set($event)"
+    (ok)="onConfirmDeleteTemplate()"
+    okClass="btn-error">
+    {{ t('msg.templateDeletionMessage') }}
+  </btp-modal>
+
+  <btp-modal
+    [open]="isAppendTemplateModalOpen()"
+    (openChange)="isAppendTemplateModalOpen.set($event)"
+    (ok)="onConfirmAppendTemplate()">
+    {{ t('msg.templateAppend') }}
+  </btp-modal>
+</ng-template>

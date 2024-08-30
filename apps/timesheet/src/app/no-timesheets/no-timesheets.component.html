@@ -1,0 +1,97 @@
+<ng-template transloco let-t>
+  <div class="px-2 md:px-8">
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <li>
+          <a routerLink="/home">{{ t('sys.home') }}</a>
+        </li>
+        <li>
+          {{ t('sys.noTimesheets') }}
+        </li>
+      </ul>
+    </div>
+
+    <div class="md:flex justify-between mb-5">
+      <div class="mb-5">
+        <h1 class="text-3xl font-bold text-black dark:text-white">
+          {{ t('sys.employessWithNoTimesheets') }}
+        </h1>
+      </div>
+    </div>
+    <div class="card bg-white dark:bg-base-100 max-w-5xl">
+      <div class="card-body">
+        <!---->
+        <div class="flex justify-between mb-3 items-center">
+          <p>
+            {{
+              weekDateFormatted()[0]
+                | date : 'MMM dd' : undefined : locale.currentLocale()
+            }}
+            -
+            {{
+              weekDateFormatted()[1]
+                | date : 'mediumDate' : undefined : locale.currentLocale()
+            }}
+          </p>
+          <input
+            type="week"
+            class="input input-bordered w-full max-w-xs"
+            [formControl]="weekDateInput"
+            [max]="today" />
+        </div>
+
+        @if(noTimesheetUsersQuery()?.isLoading) {
+
+        <div class="grid grid-cols-3 gap-4 w-full">
+          @for (item of [].constructor(30); track $index) {
+          <div class="skeleton h-14 w-full"></div>
+          }
+        </div>
+        } @else if (noTimesheetsUser().length) {
+        <div
+          class="animate-fade animate-once animate-duration-1000 animate-ease-linear">
+          <kendo-grid
+            [kendoGridBinding]="noTimesheetsUser()"
+            [pageable]="true"
+            [pageSize]="10"
+            [sortable]="true">
+            <kendo-grid-column field="UserName" [title]="t('sys.userName')">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                <div class="avatar items-center placeholder">
+                  <div
+                    class="bg-neutral text-neutral-content rounded-full w-10 mr-3 uppercase">
+                    <span>{{ dataItem.UserName.substring(0, 2) }}</span>
+                  </div>
+                  <div>
+                    <div class="flex flex-col items-start">
+                      <span class="font-bold">{{ dataItem.UserName }}</span>
+                      <span class="opacity-50">{{ dataItem.EmployeeID }}</span>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="UserEmail" [title]="t('sys.email')">
+            </kendo-grid-column>
+            <kendo-grid-column field="UserRole" [title]="t('sys.role')">
+            </kendo-grid-column>
+          </kendo-grid>
+        </div>
+        } @else {
+        <div class="py-20 text-center">
+          <img
+            src="../../../../assets/svg/coffee.svg"
+            alt="calendar"
+            class="max-w-sm mx-auto mb-10" />
+          <h5 class="text-lg font-bold text-black dark:text-white mb-3">
+            {{ t('msg.reviewTitle') }}
+          </h5>
+          <p>
+            {{ t('msg.reviewBody') }}
+          </p>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</ng-template>

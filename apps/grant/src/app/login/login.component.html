@@ -1,0 +1,32 @@
+<div class="flex justify-center items-center mt-5 flex-col">
+  <div
+    class="flex font-bold normal-case text-3xl items-center justify-center mx-3 dark:text-white text-black mb-20 mt-10">
+    <ng-icon name="instance" size="50" class="mr-2"></ng-icon>
+    <span>Grant MGT</span>
+  </div>
+  <div class="card w-96 bg-base-100 shadow-2xl">
+    <form [formGroup]="form" (submit)="onLogin()" class="card-body">
+      <div class="text-center">
+        <h2 class="text-center text-xl mb-2 font-bold">
+          {{ 'sys.login' | transloco }}
+        </h2>
+        <p class="mb-5 text-gray-400 dark:text-gray-500">
+          {{ 'msg.welcomeTimesheetlogin' | transloco }}
+        </p>
+      </div>
+      <input
+        type="text"
+        formControlName="UserID"
+        [placeholder]="'sys.userName' | transloco"
+        class="input input-bordered w-full max-w-xs" />
+      <input
+        type="password"
+        formControlName="UserPassword"
+        [placeholder]="'sys.password' | transloco"
+        class="input input-bordered w-full max-w-xs mb-5" />
+      <button class="btn btn-primary">
+        {{ 'sys.login' | transloco }}
+      </button>
+    </form>
+  </div>
+</div>

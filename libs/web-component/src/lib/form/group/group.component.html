@@ -1,0 +1,29 @@
+@if (form()) {
+<div class="card bg-white dark:bg-base-100 mb-5">
+  <div class="card-body">
+    <h2 class="card-title">{{ form()?.label }}</h2>
+    <div class="grid xl:grid-cols-2 gap-5">
+      @for (item of form()?.children; track $index) {
+
+      <!---->
+      @if (item.type === inputType.group && item.children?.length) {
+      <btp-group
+        [form]="item"
+        [isShowMore]="isShowMore()"
+        [formOptions]="formOptions()"
+        [isDisabled]="isDisabled()"
+        (valueChange)="onValueChange($event)"
+        (isValidChange)="onIsValidChange($event)" />
+      } @else if (!item.inShowMore || isShowMore()) {
+      <btp-input
+        [input]="item"
+        (valueChange)="onValueChange($event)"
+        (isValidChange)="onIsValidChange($event)" />
+      }
+
+      <!---->
+      }
+    </div>
+  </div>
+</div>
+}

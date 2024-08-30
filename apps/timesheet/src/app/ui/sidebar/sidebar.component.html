@@ -1,0 +1,34 @@
+<div class="grow h-full bg-base-100 border-r dark:border-r-gray-700">
+  <a
+    routerLink="./"
+    class="btn btn-ghost font-bold normal-case text-xl mx-3 my-5 dark:text-white text-black">
+    <ng-icon name="time" size="40"></ng-icon>
+    Timesheet
+  </a>
+
+  <ul class="menu">
+    @for (menu of userMenu(); track menu.path) {
+    <!---->
+    @if (!menu.invisible) {
+    <li>
+      <a
+        [routerLink]="menu.path"
+        routerLinkActive="bg-primary !text-white"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="hover:bg-primary/20 hover:text-white focus:!bg-primary focus:shadow-lg focus:shadow-primary/20 my-1 items-center flex justify-between">
+        <div class="flex items-center">
+          <ng-icon [name]="menu.icon" size="24" class="mr-2"></ng-icon>
+          <span>{{ menu.text }}</span>
+        </div>
+        @if (menu.badge) {
+        <div class="badge">
+          {{ menu.badge }}
+        </div>
+        }
+      </a>
+    </li>
+    }
+    <!---->
+    }
+  </ul>
+</div>

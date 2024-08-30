@@ -1,0 +1,75 @@
+<ng-template transloco let-t>
+  <div class="px-2 md:px-8">
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <li>
+          <a routerLink="/home">{{ t('sys.home') }}</a>
+        </li>
+        <li>{{ t('sys.award') }}</li>
+      </ul>
+    </div>
+    <div class="md:flex justify-between mb-5">
+      <div class="mb-5">
+        <h1 class="text-3xl font-bold text-black dark:text-white mb-3">
+          {{ t('sys.award') }}
+        </h1>
+        <div class="flex flex-wrap">
+          <div class="form-control mr-3">
+            <label class="flex items-center">
+              <input type="checkbox" checked="checked" class="checkbox" />
+              <span class="label-text pl-2"
+                >{{ t('sys.includeClosedAwards') }}
+              </span>
+            </label>
+          </div>
+          <div class="form-control">
+            <label class="flex items-center">
+              <input type="checkbox" checked="checked" class="checkbox" />
+              <span class="label-text pl-2"
+                >{{ t('sys.includeAllAwards') }}
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-wrap grow justify-end">
+        <input
+          type="text"
+          placeholder="Search..."
+          class="input input-md w-full max-w-xs mr-3" />
+        <a routerLink="award-form" class="btn btn-primary">{{
+          t('sys.addAward')
+        }}</a>
+      </div>
+    </div>
+    <div class="card bg-white dark:bg-base-100">
+      <div class="card-body">
+        <kendo-grid [data]="gridData">
+          <kendo-grid-column field="SubGrantee" title="Sub Grantee">
+            <ng-template kendoGridCellTemplate let-dataItem>
+              <a routerLink="profile" class="!link font-bold">{{
+                dataItem.SubGrantee
+              }}</a>
+              <p class="opacity-40">
+                {{ dataItem.Id }}
+              </p>
+            </ng-template>
+          </kendo-grid-column>
+          <kendo-grid-column field="SubGranteeAwardName" title="Award Name">
+            <ng-template kendoGridCellTemplate let-dataItem>
+              <p>{{ dataItem.SubGranteeAwardName }}</p>
+              <p class="opacity-40">
+                {{ dataItem.SubGranteeAwardNumber }}
+              </p>
+            </ng-template>
+          </kendo-grid-column>
+          <kendo-grid-column title="Controls">
+            <ng-template kendoGridCellTemplate let-dataItem>
+              <a routerLink="sub-grant-form" class="!link">Edit</a>
+            </ng-template>
+          </kendo-grid-column>
+        </kendo-grid>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "nrwl.angular-console",
+    "esbenp.prettier-vscode",
+    "firsttris.vscode-jest-runner",
+    "dbaeumer.vscode-eslint",
+    "angular.ng-template",
+    "ms-azuretools.vscode-azureappservice",
+    "eamodio.gitlens",
+    "snyk-security.snyk-vulnerability-scanner",
+    "tabnine.tabnine-vscode",
+    "sonarsource.sonarlint-vscode",
+    "bradlc.vscode-tailwindcss",
+    "cyrilletuzi.angular-schematics"
+  ]
+}

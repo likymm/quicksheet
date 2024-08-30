@@ -1,0 +1,236 @@
+<ng-template transloco let-t>
+  <div class="px-2 md:px-8">
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <li>
+          <a [routerLink]="isApproving() ? '/review' : '/time'">{{
+            t('sys.timesheet')
+          }}</a>
+        </li>
+        @if (currentTimesheetHeader()) {
+        <li>
+          {{ currentTimesheetHeader()!.TMHeaderCode }}
+        </li>
+        }
+      </ul>
+    </div>
+
+    <!-- Work around for angular not detecting changes of timesheet() signal onpush -->
+    @if (timesheetDetail$ | async; as tmd) {
+    <pre class="hidden">{{ tmd | json }}</pre>
+    }
+
+    <tms-heading
+      [loading]="loadingTimesheetHeader()"
+      [locale]="locale.currentLocale()"
+      [timesheetHeader]="currentTimesheetHeader()"
+      [templates]="templates()?.data"
+      [timesheets]="timesheetDetails()?.data"
+      [weekdayIndex]="currrentWeekdayIndex()"
+      [weekView]="weekView()"
+      [isFormDisabled]="isFormDisabled()"
+      [isManager]="isManager()"
+      [isApproving]="isApproving()"
+      [isApproved]="isApproved()"
+      [canEdit]="canEdit()"
+      [canBeApproved]="canBeApproved()"
+      [isCurrentUsersTimesheet]="isCurrentUsersTimesheet()"
+      (selectDay)="onSelectDay($event)"
+      (viewIn)="viewIn($event)"
+      (deleteTimesheet)="onDeleteHeader()"
+      (approveTimesheet)="onApproveHeader()"
+      (returnTimesheet)="onReturnHeader($event)"
+      (submitTimesheet)="onSubmitHeader()"
+      (recallTimesheet)="onRecallTimesheet()"
+      (addTemplate)="onAddTemplate($event)"
+      (useTemplate)="onUseTemplate($event)"
+      (deleteTemplate)="onDeleteTemplate($event)"
+      (next)="nextTimesheet(true)"
+      (previous)="nextTimesheet(false)"
+      (goToTodaysWeek)="onGoToTodaysWeek()"
+      (startReview)="onStartReview()"
+      (export)="exportToExcel()"
+      (import)="onImport($event)"></tms-heading>
+
+    @if (!loadingTimesheetHeader()) {
+    <tms-time-stats
+      [locale]="locale.currentLocale()"
+      [timesheetHeader]="currentTimesheetHeader()"
+      [isApproving]="isApproving()"></tms-time-stats>
+    }
+
+    <div class="grid gap-5 grid-cols-6">
+      <div
+        class="col-span-6"
+        [ngClass]="{
+        'xl:col-span-4': canEdit() && (weekView() === 'weekdays' || weekView() === 'week'),
+      }">
+        <div class="card bg-white dark:bg-base-100">
+          <div class="card-body">
+            @if (!isLoadingTimesheetDetails()) {
+            <!---->
+
+            @if (weekView() === 'daily') {
+            <tms-timegrid-daily
+              [isFormDisabled]="isFormDisabled()"
+              [timesheetDetail]="currentTimesheetDetail()"
+              [formOptions]="timesheetFormOptions()"
+              [timesheets]="timesheets()"
+              [weekdays]="weekdays()"
+              [weekdaysTotals]="weekdaysTotals()"
+              [weekdayIndex]="currrentWeekdayIndex()"
+              (addTask)="onAddTask($event)"
+              (timesheetChange)="onTimesheetChange($event)"
+              (deleteTimesheetDetails)="onDeleteTimesheetDetail($event)"
+              (editDailyTask)="onEditTimesheetDetails($event)"
+              (timesheetEdit)="openTimesheetDetailFormModal($event)"
+              (deleteTimesheetDetail)="onDeleteTimesheetDetail($event)"
+              (selectDay)="onSelectDay($event)"></tms-timegrid-daily>
+            } @else if (weekView() === 'report') {
+            <tms-timegrid-report
+              [isApproving]="isApproving()"
+              [isFormDisabled]="isFormDisabled()"
+              [isSaving]="
+                isAddingNewTimesheetDetail() || isMutatingTimesheetDetail()
+              "
+              [isFetching]="isFetchinfTimesheetDetails()"
+              [isDeleting]="isDeletingTimesheetDetails()"
+              [formOptions]="timesheetFormOptions()"
+              [timesheets]="timesheets()"
+              [weekdays]="weekdays()"
+              [weekdaysTotals]="weekdaysTotals()"
+              [weekdayIndex]="currrentWeekdayIndex()"
+              (addTask)="onAddNewStateTask($event)"
+              [billingTypes]="billTypes()?.data"
+              (deleteTask)="onDeleteTask($event)"
+              (editTask)="onEditTask($event)"
+              (editDailyTask)="openTimesheetDetailFormModal($event)"
+              (timesheetChange)="onTimesheetChange($event)"
+              (deleteTimesheetDetail)="onDeleteTimesheetDetail($event)"
+              (approveTimesheetDetal)="onApproveTimesheetDetails($event)"
+              (returnTimesheetDetal)="onReturnTimesheetDetails($event)"
+              (duplicate)="onDuplicate($event)"></tms-timegrid-report>
+            } @else {
+            <!---->
+            <tms-timegrid
+              [isFormDisabled]="
+                isFormDisabled() || isAddingNewTimesheetDetail()
+              "
+              [isSaving]="isMutatingTimesheetDetail()"
+              [timesheetDetail]="currentTimesheetDetail()"
+              [timesheetDetails]="timesheetDetails()?.data"
+              [formOptions]="timesheetFormOptions()"
+              [weekView]="weekView()"
+              [timesheets]="timesheets()"
+              [weekdays]="weekdays()"
+              [weekdaysTotals]="weekdaysTotals()"
+              [weekdayIndex]="currrentWeekdayIndex()"
+              (addTask)="onAddTask()"
+              (timesheetChange)="onTimesheetChange($event)"
+              (deleteTask)="onDeleteTask($event)"
+              (editTask)="onEditTask($event)"
+              (editDailyTask)="onEditTimesheetDetails($event)"
+              (deleteTimesheetDetail)="onDeleteTimesheetDetail($event)"
+              (selectDay)="onSelectDay($event)"
+              (duplicate)="onDuplicate($event)"></tms-timegrid>
+            <!---->
+            }
+
+            <!---->
+            } @else {
+            <div class="grid grid-cols-5 gap-4 w-full">
+              @for (item of [].constructor(30); track $index) {
+              <div class="skeleton h-14 w-full"></div>
+              }
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+      @if (canEdit() && (weekView() === 'weekdays' || weekView() === 'week')) {
+      <div class="col-span-6 xl:col-span-2">
+        <div class="card bg-white dark:bg-base-100 w-full">
+          <div class="card-body">
+            <tms-daily-item-form
+              [timesheetDetail]="currentTimesheetDetail()"
+              [formOptions]="timesheetFormOptions()"
+              [isFormDisabled]="
+                isFormDisabled() || isAddingNewTimesheetDetail()
+              "
+              (timesheetChange)="onTimesheetChange($event)"
+              (timesheetEdit)="openTimesheetDetailFormModal($event)"
+              (timesheetDelete)="
+                onDeleteTimesheetDetail($event)
+              "></tms-daily-item-form>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+
+  <btp-modal
+    [open]="isProjectModalOpen()"
+    boxClass="max-w-2xl"
+    (openChange)="isProjectModalOpen.set($event); resetFormTrigger()"
+    [title]="
+      currentTimesheetDetail()?.TMDetailID
+        ? t('sys.editTask')
+        : t('sys.addTask')
+    "
+    [disabledOk]="disabledOkTask()"
+    (ok)="onConfirmAddTask()">
+    <tms-timesheet-form
+      [locale]="locale.currentLocale()"
+      [timesheetDetail]="timesheetDetailModalFormInput()"
+      [timesheetHeader]="currentTimesheetHeader()"
+      [resetFormCount]="resetTimesheetForm()"
+      [projects]="projects()?.data"
+      [tasks]="tasks()?.data"
+      [billingTypes]="billTypes()?.data"
+      (changeTimesheetDetail)="timesheetFormModalChange($event)"
+      (validChange)="onTaskFormValidChange($event)"></tms-timesheet-form>
+  </btp-modal>
+
+  <btp-modal
+    [open]="isDeleteTimeSheetModalOpen()"
+    (openChange)="isDeleteTimeSheetModalOpen.set($event)"
+    (ok)="onConfirmDeleteHeader()"
+    okClass="btn-error">
+    {{ t('msg.timesheetDeletionMessage') }}
+  </btp-modal>
+
+  <btp-modal
+    [open]="isDeleteTaskModalOpen()"
+    (openChange)="isDeleteTaskModalOpen.set($event)"
+    (ok)="onConfirmDeleteTask()"
+    okClass="btn-error">
+    {{ t('msg.taskDeletionMessage') }}
+  </btp-modal>
+
+  <btp-modal
+    [open]="isDeleteTimesheetDetailModalOpen()"
+    (openChange)="isDeleteTimesheetDetailModalOpen.set($event)"
+    (ok)="onConfirmDeleteTimesheetDetail()"
+    okClass="btn-error">
+    {{ t('msg.tmDetailDeletionMessage') }}
+  </btp-modal>
+
+  <btp-modal
+    [open]="isReturnModalOpen()"
+    boxClass="max-w-2xl"
+    (openChange)="isReturnModalOpen.set($event)"
+    [title]="t('sys.rejectTimesheetDetails')"
+    (ok)="onConfirmReturnTimesheetDetails()">
+    <label class="form-control w-full">
+      <div class="label">
+        <span class="label-text">{{ t('sys.remarks') }}</span>
+      </div>
+      <textarea
+        [formControl]="timesheetDetailRemarksInput"
+        type="text"
+        class="textarea textarea-bordered"
+        rows="3"></textarea>
+    </label>
+  </btp-modal>
+</ng-template>

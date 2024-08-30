@@ -1,0 +1,25 @@
+<div
+  class="border-black border dark:border-white/5 border-black/10 bg-white dark:bg-base-100 p-4 px-7 rounded-lg xl:flex items-center"
+  [ngClass]="{
+    'cursor-pointer hover:shadow-xl': isHover()
+  }">
+  <p class="text-4xl font dark:text-white text-black me-5">
+    {{ value() }}
+  </p>
+  <div>
+    <p class="text-black/40 dark:text-white/40 text-sm">{{ title() }}</p>
+    <p>
+      @if (badge()) {
+      <span
+        class="badge mb-3 mt-2"
+        [ngClass]="{
+          'bg-error/10 text-error': type() === 'error',
+          'bg-warning/10 text-warning': type() === 'warning',
+        }">
+        <ng-content></ng-content>
+        {{ badge() }}
+      </span>
+      }
+    </p>
+  </div>
+</div>

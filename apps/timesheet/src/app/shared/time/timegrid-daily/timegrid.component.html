@@ -1,0 +1,181 @@
+<ng-template transloco let-t>
+  @if (timesheets().length) {
+  <div class="overflow-x-auto 2xl:!overflow-visible">
+    <table class="table table-xs table-zebra" aria-label="timesheet">
+      <thead>
+        <tr>
+          <th scope="project" class="w-[1000px]">
+            @if (!isFormDisabled()) {
+            <button
+              (click)="onAddProject(timesheets()[0].times[weekdayIndex()])"
+              type="button"
+              aria-label="Add project"
+              class="btn btn-primary btn-md min-w-[200px]">
+              <ng-icon name="add" size="34"></ng-icon>
+              {{ t('sys.addTask') }}
+            </button>
+            }
+          </th>
+
+          @for (day of weekdays(); track day.name; let gridWeekdayIndex =
+          $index) { @if (timesheets()[0].times[gridWeekdayIndex]) {
+          <td
+            (click)="onSelectDay(gridWeekdayIndex)"
+            class="w-[130px] bg-opacity-5 cursor-pointer !border-b-4 border-transparent hover:border-primary hover:bg-primary/10 transition-colors"
+            [ngClass]="{
+              'bg-success': isToday(day.date) && !isCurrentDay(day.date),
+              '!border-primary bg-primary': isCurrentDay(day.date),
+            }">
+            <p
+              class="text-xl font-bold"
+              [ngClass]="{
+                '!text-success': isToday(day.date),
+                'text-black dark:text-white': !isFuture(day.date)
+              }">
+              {{ day.date | date : 'EEE' : undefined : locale.currentLocale() }}
+            </p>
+            <p>
+              {{
+                day.date | date : 'dd MMM' : undefined : locale.currentLocale()
+              }}
+            </p>
+          </td>
+          }
+
+          <!---->
+          }
+          <th scope="controls"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (timesheet of timesheets(); track timesheet.orderNumber; let
+        timesheetIndex = $index) {
+        <tr>
+          <td>
+            @if (timesheet.times[weekdayIndex()].LineItemStatus) {
+            <span
+              class="badge badge-outline mb-1"
+              [class]="
+                timesheet.times[weekdayIndex()].LineItemStatus | statusBG
+              "
+              >{{ timesheet.times[weekdayIndex()].LineItemStatus }}</span
+            >
+            }
+            <p class="text-xl font-bold text-black dark:text-white">
+              {{ timesheet.project }}
+            </p>
+            <p>{{ timesheet.task }}</p>
+            @if (timesheet.times[weekdayIndex()].ApprovedByUsername) {
+            <div class="mb-3">
+              <tms-approver-remarks
+                [timesheetDetails]="timesheet.times[weekdayIndex()]"
+                [locale]="locale.currentLocale()"></tms-approver-remarks>
+            </div>
+            }
+          </td>
+          <td
+            class="bg-opacity-5 align-top pt-2"
+            [ngClass]="{
+              'bg-success': isToday(timesheet.times[weekdayIndex()].TMDate)
+            }">
+            <label class="form-control w-full max-w-xs">
+              <div class="label">
+                {{ t('sys.time') }}
+              </div>
+              <input
+                [(ngModel)]="timesheet.times[weekdayIndex()].Hours"
+                (ngModelChange)="
+                  onTimeChange(timesheet.times[weekdayIndex()], timesheet);
+                  onFocus(timesheet.times[weekdayIndex()])
+                "
+                (focus)="onFocus(timesheet.times[weekdayIndex()])"
+                [disabled]="isFormDisabled()"
+                type="number"
+                class="input input-bordered w-full text-xl min-w-[80px]"
+                max="24"
+                min="1" />
+            </label>
+          </td>
+          <td class="text-right" colspan="100">
+            <div class="flex items-center">
+              <tms-daily-item-form
+                [isFormDisabled]="isFormDisabled()"
+                [formOptions]="formOptions()"
+                [timesheetDetail]="timesheet.times[weekdayIndex()]"
+                [isDailyLayout]="true"
+                (timesheetChange)="onTimeChange($event, timesheet)"
+                (timesheetDelete)="onDeleteTimehseetDetail()"
+                class="w-full"></tms-daily-item-form>
+
+              @if (!isFormDisabled()) {
+              <!--  -->
+              @if (timesheet.times[weekdayIndex()].TMDetailID) {
+              <div class="flex flex-col">
+                <div class="tooltip" [attr.data-tip]="t('sys.edit')">
+                  <button
+                    [attr.aria-label]="t('sys.edit')"
+                    (click)="onEdit(timesheet.times[weekdayIndex()])"
+                    type="button"
+                    class="btn btn-ghost">
+                    <ng-icon name="pencil" size="24"></ng-icon>
+                  </button>
+                </div>
+                <div class="tooltip" [attr.data-tip]="t('sys.delete')">
+                  <button
+                    type="button"
+                    class="btn btn-ghost"
+                    [attr.aria-label]="t('sys.delete')"
+                    (click)="onDelete(timesheet.times[weekdayIndex()])">
+                    <ng-icon name="deleteBin" size="24"></ng-icon>
+                  </button>
+                </div>
+              </div>
+              }
+              <!--  -->
+              }
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+      @if (timesheets()[0].times[weekdayIndex()]) {
+      <tfoot>
+        <tr>
+          <th scope="project"></th>
+          <td class="align-top">
+            <p
+              class="text-xl font-bold text-black dark:text-white px-4"
+              [class]="{
+                '!text-red-500': weekdaysTotals()[weekdayIndex()] > 24
+              }">
+              {{ weekdaysTotals()[weekdayIndex()] | decimalTimeFormat }}
+            </p>
+          </td>
+          <th scope="controls"></th>
+        </tr>
+      </tfoot>
+      }
+    </table>
+  </div>
+  } @else {
+
+  <button
+    (click)="onAddProject()"
+    type="button"
+    aria-label="Add project"
+    class="btn btn-primary btn-md min-w-[200px]">
+    <ng-icon name="add" size="34"></ng-icon>
+    {{ t('sys.addTask') }}
+  </button>
+  <div class="py-20 text-center">
+    <img
+      src="../../../../assets/svg/calendar.svg"
+      class="max-w-sm mx-auto mb-5"
+      alt="calendar" />
+    <h5 class="text-lg font-bold text-black dark:text-white mb-3">
+      {{ t('msg.emptyTaskTitle') }}
+    </h5>
+    <p class="text-lg">{{ t('msg.emptyTaskBody') }}</p>
+  </div>
+  }
+</ng-template>

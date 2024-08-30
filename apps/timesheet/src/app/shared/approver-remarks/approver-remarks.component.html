@@ -1,0 +1,29 @@
+<ng-template transloco let-t>
+  <div class="chat chat-start">
+    <div class="chat-image avatar placeholder uppercase">
+      <div class="bg-neutral text-neutral-content rounded-full w-10 mr-2">
+        @if (timesheetDetails()!.ApprovedByUsername) {
+        <span>{{
+          timesheetDetails()!.ApprovedByUsername?.substring(0, 2)
+        }}</span>
+        }
+      </div>
+    </div>
+    <div class="chat-bubble bg-warning text-warning-content">
+      {{ timesheetDetails()!.Remarks || '...' }}
+    </div>
+    <div class="opacity-50 mt-1">
+      <span class="font-bold mr-2">
+        {{ timesheetDetails()!.ApprovedByUsername }}
+      </span>
+      <div
+        class="tooltip pr-4"
+        [attr.data-tip]="
+          timesheetDetails()!.ApprovedDate
+            | date : 'short' : undefined : locale()
+        ">
+        {{ timesheetDetails()!.ApprovedDate | timeAgo : locale() }}
+      </div>
+    </div>
+  </div>
+</ng-template>

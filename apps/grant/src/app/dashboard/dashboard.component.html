@@ -1,0 +1,53 @@
+<ng-template transloco let-t>
+  <div class="px-2 md:px-8">
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <li>
+          <a routerLink="/home">{{ t('sys.home') }}</a>
+        </li>
+        <li>{{ t('sys.dashboard') }}</li>
+      </ul>
+    </div>
+    <h1 class="text-3xl font-bold mb-5 text-black dark:text-white">
+      {{ t('sys.dashboard') }}
+    </h1>
+
+    <div class="grid grid-cols-1 xl:grid-cols-5 gap-5">
+      <div class="xl:col-span-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-5">
+          @for (i of [1,2,3,4]; track i) {
+          <btp-widget
+            [title]="t('sys.awardAndSubGrants')"
+            value="41"
+            badge="Overdue document"
+            type="warning"
+            [isHover]="true">
+            <ng-icon name="hourglass" size="14" class="text-warning mr-1" />
+          </btp-widget>
+          }
+        </div>
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
+          <btp-chart class="col-span-4"></btp-chart>
+          <btp-chart class="col-span-4"></btp-chart>
+          <btp-chart class="col-span-4"></btp-chart>
+        </div>
+      </div>
+      <div class="xl:col-span-1">
+        <div
+          class="card border-black border dark:border-white/5 border-black/10 bg-white dark:bg-base-100">
+          <div class="card-body">
+            <div class="card-title">{{ t('sys.alert') }}</div>
+            @for (i of [1,2,3,4]; track i) {
+            <btp-widget
+              title="Awards with low budget"
+              value="65"
+              type="warning"
+              class="mb-5"
+              [isHover]="true" />
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

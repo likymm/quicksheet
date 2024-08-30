@@ -1,0 +1,15 @@
+@if (isMutating() || isFetching()) {
+<progress
+  class="progress w-full absolute top-0 z-30 right-0 left-0 !h-1"></progress>
+}
+<div class="min-h-screen h-full flex flex-col bg-base-200">
+  <div class="flex flex-wrap grow">
+    <div class="hidden lg:block lg:w-72">
+      <tms-sidebar></tms-sidebar>
+    </div>
+    <div class="flex-1 h-screen overflow-auto">
+      <tms-header class="sticky top-0 z-20"></tms-header>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

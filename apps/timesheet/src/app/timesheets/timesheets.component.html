@@ -1,0 +1,175 @@
+<ng-template transloco let-t>
+  <div class="px-2 md:px-8">
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <li>
+          {{ t('sys.timesheet') }}
+        </li>
+      </ul>
+    </div>
+
+    <div class="md:flex justify-between mb-5">
+      <div class="mb-5">
+        <h1 class="text-3xl font-bold text-black dark:text-white">
+          {{ t('sys.timesheet') }}
+        </h1>
+      </div>
+      <div class="flex flex-wrap">
+        <button
+          type="button"
+          class="btn btn-neutral mr-3"
+          (click)="onGoToTodaysWeek()">
+          {{ t('sys.goToCurrentWeek') }}
+        </button>
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-primary">
+            {{ t('sys.add') }}
+            <ng-icon name="arrowDown" size="24"></ng-icon>
+          </div>
+          <div
+            tabindex="0"
+            class="dropdown-content z-[1] card card-compact w-72 p-2 shadow bg-base-100">
+            <div class="card-body">
+              <h3 class="card-title">{{ t('sys.addTimesheet') }}</h3>
+              <p class="mb-5">{{ t('msg.addTimesheet') }}</p>
+              <button
+                type="button"
+                (click)="onAddForCurrentWeek()"
+                class="btn btn-lg btn-primary">
+                {{ t('sys.currentWeek') }}
+              </button>
+              <p class="uppercase divider">
+                {{ t('sys.or') }}
+              </p>
+              <div>{{ t('sys.selectDate') }}</div>
+              <input
+                type="week"
+                class="input input-bordered input-lg w-full max-w-xs py-8"
+                [formControl]="toAddDate" />
+              <button
+                [disabled]="!toAddDate.value"
+                type="button"
+                (click)="onAddHeader()"
+                class="btn btn-primary">
+                {{ t('sys.continue') }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card bg-white dark:bg-base-100">
+      <div class="card-body">
+        <div>
+          <ul
+            class="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box mb-2">
+            @for (item of statusFilter; track item) {
+
+            <li>
+              <a
+                [ngClass]="{ 'dark:bg-gray-700 bg-white': item === status() }"
+                class="mr-2"
+                (click)="status.set(item)"
+                >{{ item || t('sys.all') }}
+              </a>
+            </li>
+            }
+          </ul>
+        </div>
+
+        @if(timesheetHeaders()?.isLoading) {
+
+        <div class="grid grid-cols-5 gap-4 w-full">
+          @for (item of [].constructor(30); track $index) {
+          <div class="skeleton h-14 w-full"></div>
+          }
+        </div>
+        } @else if (timesheets().length) {
+        <div
+          class="animate-fade animate-once animate-duration-1000 animate-ease-linear">
+          <kendo-grid
+            [kendoGridBinding]="timesheets()"
+            [pageable]="true"
+            [pageSize]="10"
+            [sortable]="true"
+            [sort]="sort()"
+            (sortChange)="onSortChange($event)">
+            <kendo-grid-column
+              field="TMHeaderCode"
+              [title]="t('sys.headerCode')">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                <a
+                  routerLink="date"
+                  [queryParams]="{ id: dataItem.TMHeaderID }"
+                  class="!link font-bold">
+                  {{ dataItem.TMHeaderCode }}
+                </a>
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column
+              [title]="t('sys.duration')"
+              field="TMPeriodStartDate">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                {{
+                  dataItem.TMPeriodStartDate
+                    | date : 'mediumDate' : undefined : locale.currentLocale()
+                }}
+                -
+                {{
+                  dataItem.TMPeriodEndDate
+                    | date : 'mediumDate' : undefined : locale.currentLocale()
+                }}
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column
+              field="TMTotalHours"
+              [title]="t('sys.totalHours')">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                <p>{{ dataItem.TMTotalHours | decimalTimeFormat }} hrs</p>
+                <progress
+                  class="progress !w-20"
+                  [attr.value]="dataItem.TMTotalHours"
+                  max="40"></progress>
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="Status" [title]="t('sys.status')">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                <span
+                  class="badge badge-outline"
+                  [class]="dataItem.Status | statusBG"
+                  >{{ dataItem.Status }}</span
+                >
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column
+              [title]="t('sys.approver')"
+              field="ApprovedByUsername">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                @if (dataItem.ApprovedByUsername) {
+
+                <div class="mb-3">
+                  <tms-approver-remarks
+                    [timesheetDetails]="dataItem"
+                    [locale]="locale.currentLocale()"></tms-approver-remarks>
+                </div>
+                }
+              </ng-template>
+            </kendo-grid-column>
+          </kendo-grid>
+        </div>
+        } @else {
+        <div class="py-20 text-center">
+          <img
+            src="../../../../assets/svg/calendar.svg"
+            class="max-w-sm mx-auto mb-5"
+            alt="calendar" />
+          <h5 class="text-lg font-bold text-black dark:text-white mb-3">
+            {{ t('msg.emptyTaskTitle') }}
+          </h5>
+          <p class="text-lg">{{ t('msg.emptyTaskBody') }}</p>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</ng-template>

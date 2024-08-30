@@ -1,0 +1,31 @@
+<ng-template transloco let-t>
+  @if (timesheetDetail()?.TMDetailID || hasOrderNumber()) {
+
+  <!---->
+
+  @if (timesheetDetail()!.LineItemStatus) {
+  <span
+    class="badge badge-outline mb-5 mr-2"
+    [class]="timesheetDetail()!.LineItemStatus | statusBG"
+    >{{ timesheetDetail()!.LineItemStatus }}</span
+  >
+  }
+
+  <!---->
+  @if (timesheetDetail()?.ApprovedByUsername) {
+  <div class="dark:border-white/5 mb-5">
+    <tms-approver-remarks
+      [timesheetDetails]="timesheetDetail()"
+      [locale]="locale()"></tms-approver-remarks>
+  </div>
+  }
+
+  <!---->
+  }
+  <btp-form
+    [form]="form()"
+    [formOptions]="formOptions()"
+    [resetCount]="resetFormCount()"
+    (valueChange)="onValueChange($event)"
+    (isValidChange)="onValidChange($event)" />
+</ng-template>

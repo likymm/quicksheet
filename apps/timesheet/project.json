@@ -1,0 +1,87 @@
+{
+  "name": "timesheet",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "tms",
+  "sourceRoot": "apps/timesheet/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/timesheet",
+        "index": "apps/timesheet/src/index.html",
+        "browser": "apps/timesheet/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/timesheet/tsconfig.app.json",
+        "assets": [
+          "apps/timesheet/src/favicon.ico",
+          "apps/timesheet/src/assets",
+          "apps/timesheet/src/i18n",
+          "apps/timesheet/src/web.config",
+          {
+            "glob": "**/*",
+            "input": "./libs/shared/src/lib/assets",
+            "output": "./assets"
+          },
+          {
+            "glob": "**/*",
+            "input": "./libs/shared/src/lib/i18n",
+            "output": "./i18n"
+          }
+        ],
+        "styles": [
+          "apps/timesheet/src/styles.css",
+          "libs/shared/src/lib/styles/styles.css"
+        ],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "2mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "timesheet:build:production"
+        },
+        "development": {
+          "buildTarget": "timesheet:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "timesheet:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    }
+  }
+}

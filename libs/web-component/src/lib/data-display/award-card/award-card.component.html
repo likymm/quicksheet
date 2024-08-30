@@ -1,0 +1,55 @@
+<ng-template transloco let-t>
+  <div class="card bg-primary">
+    <div class="p-5 2xl:p-10 text-white/80">
+      <p class="text-sm flex">
+        <ng-icon name="award" size="18" class="text-white mr-1"></ng-icon>
+        Award <a class="link ms-2">#0322</a>
+      </p>
+      <p class="text-xl text-white mb-5">
+        <a href="#" class="font-bold link link-hover">PADF Management</a>
+      </p>
+      <p class="text-sm flex">
+        <ng-icon name="type" size="18" class="text-white mr-1"></ng-icon>
+        Donor
+      </p>
+      <p class="text-xl text-white mb-10">
+        <a href="#" class="font-bold link link-hover">HA-ARC YOUTH PROGRAM</a>
+      </p>
+      <p class="text-sm flex">
+        <ng-icon name="wallet" size="18" class="text-white mr-1"></ng-icon>
+        Total amount
+      </p>
+      <p class="text-4xl text-white mb-5">
+        <span class="font-bold">$4,900</span>
+      </p>
+      <p class="text-sm flex">
+        <ng-icon name="wallet" size="18" class="text-white mr-1"></ng-icon>
+        Remaining
+      </p>
+      <p class="text-4xl text-white mb-5">
+        <span class="font-bold">$300</span>
+      </p>
+      <progress
+        class="progress progress-warning w-full mb-10"
+        value="20"
+        max="100"></progress>
+      <p class="text-sm flex">
+        <ng-icon name="calendar" size="18" class="text-white mr-1"></ng-icon>
+        Start and end date
+      </p>
+      <div class="flex justify-between mb-3">
+        <p class="text-white font-bold">Jan 18, 2023</p>
+        <p class="text-white font-bold">Jan 18, 2025</p>
+      </div>
+      <progress
+        class="progress progress-warning w-full"
+        value="74"
+        max="100"></progress>
+    </div>
+    <div class="card-actions justify-end p-2">
+      <a routerLink="/award/profile" class="btn btn-success btn-sm"
+        >View award</a
+      >
+    </div>
+  </div>
+</ng-template>

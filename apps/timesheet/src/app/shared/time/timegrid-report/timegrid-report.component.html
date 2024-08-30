@@ -1,0 +1,150 @@
+<ng-template transloco let-t>
+  <div class="overflow-x-auto 2xl:!overflow-visible">
+    <table class="table table-xs table-zebra" aria-label="timesheet">
+      <thead>
+        <tr>
+          <th>
+            @if (!isFormDisabled()) {
+            <div class="tooltip" [attr.data-tip]="t('sys.addTask')">
+              <button
+                (click)="onAddProject()"
+                type="button"
+                aria-label="Add project"
+                class="btn btn-primary">
+                <ng-icon name="add" size="34"></ng-icon>
+              </button>
+            </div>
+            }
+          </th>
+          @for (day of weekdays(); track day.name; let weekdayIndex = $index) {
+          <!---->
+
+          <td
+            class="w-80 bg-opacity-5"
+            [ngClass]="{
+              'bg-success': isToday(day.date)
+            }">
+            <p
+              class="text-xl font-bold"
+              [ngClass]="{
+                '!text-success': isToday(day.date),
+                'text-black dark:text-white': !isFuture(day.date)
+              }">
+              {{ day.date | date : 'EEE' : undefined : locale.currentLocale() }}
+            </p>
+            <p>
+              {{
+                day.date | date : 'dd MMM' : undefined : locale.currentLocale()
+              }}
+            </p>
+          </td>
+
+          <!---->
+          }
+          <th scope="controls"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (timesheet of timesheets(); track timesheet.orderNumber; let
+        timesheetIndex = $index) {
+        <tr>
+          <td>
+            <p class="text-xl font-bold text-black dark:text-white">
+              {{ timesheet.project }}
+            </p>
+            <p>{{ timesheet.task }}</p>
+            <div class="flex min-w-44 pt-4">
+              <div class="tooltip" [attr.data-tip]="t('sys.duplicate')">
+                <button
+                  [disabled]="isSaving()"
+                  type="button"
+                  class="btn btn-ghost btn-sm px-2"
+                  [attr.aria-label]="t('sys.duplicate')"
+                  (click)="onDuplicate(timesheet)">
+                  <ng-icon name="copy" size="24"></ng-icon>
+                </button>
+              </div>
+              <div class="tooltip" [attr.data-tip]="t('sys.delete')">
+                <button
+                  type="button"
+                  class="btn btn-ghost btn-sm px-2"
+                  [attr.aria-label]="t('sys.delete')"
+                  (click)="onDelete(timesheet)">
+                  <ng-icon name="deleteBin" size="24"></ng-icon>
+                </button>
+              </div>
+            </div>
+          </td>
+          @for (day of weekdays(); track day.name; let weekdayIndex = $index) {
+          <!---->
+
+          <td
+            class="group bg-opacity-5 align-top relative transition-colors !pt-5 !pb-14 min-w-52"
+            [ngClass]="{
+              'bg-success': isToday(day.date),
+              'hover:bg-primary/10':
+                (!isFormDisabled() && !isApproving()) ||
+                (timesheet.times[weekdayIndex].TMDetailID && isApproving())
+            }">
+            <tms-time-info
+              [locale]="locale.currentLocale()"
+              [billingTypes]="billingTypes()"
+              [timesheetDetail]="timesheet.times[weekdayIndex]"
+              [isFormDisabled]="isFormDisabled()"
+              [billingTypes]="billingTypes()"
+              [isApproving]="isApproving()"
+              [isSaving]="isSaving()"
+              [isFetching]="isFetching()"
+              [isDeleting]="isDeleting()"
+              (timesheetChange)="timesheetChange.emit($event)"
+              (approveTimesheetDetal)="approveTimesheetDetal.emit($event)"
+              (returnTimesheetDetal)="returnTimesheetDetal.emit($event)"
+              (editDailyTask)="editDailyTask.emit($event)"
+              (addTask)="addTask.emit($event)"
+              (deleteTimesheetDetail)="
+                deleteTimesheetDetail.emit($event)
+              "></tms-time-info>
+          </td>
+          }
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="1000">
+            <div class="py-20 text-center">
+              <img
+                src="../../../../assets/svg/calendar.svg"
+                class="max-w-sm mx-auto mb-5"
+                alt="calendar" />
+              <h5 class="text-lg font-bold text-black dark:text-white mb-3">
+                {{ t('msg.emptyTaskTitle') }}
+              </h5>
+              <p class="text-lg">{{ t('msg.emptyTaskBody') }}</p>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="project"></th>
+
+          @for (dayTotal of weekdaysTotals(); track weekdayIndex; let
+          weekdayIndex = $index) {
+
+          <td class="align-top">
+            <p
+              class="text-xl font-bold text-black dark:text-white px-4"
+              [class]="{
+                '!text-red-500': dayTotal > 24
+              }">
+              {{ dayTotal | decimalTimeFormat }}
+            </p>
+          </td>
+          }
+
+          <th scope="controls"></th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</ng-template>

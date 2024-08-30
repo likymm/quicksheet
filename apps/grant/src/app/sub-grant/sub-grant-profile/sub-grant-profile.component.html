@@ -1,0 +1,193 @@
+<ng-template transloco let-t>
+  <!-- Breadcrumb -->
+
+  <div class="px-2 md:px-8">
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <li>
+          <a routerLink="/home">{{ t('sys.home') }}</a>
+        </li>
+        <li>
+          <a routerLink="../">{{ t('sys.subGrant') }}</a>
+        </li>
+        <li>Washington Management Center</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Main -->
+
+  <div class="flex flex-wrap">
+    <main class="w-9/12 pb-28">
+      <header>
+        <div
+          class="border-t border-b border-black/5 dark:border-white/5 px-10 pb-10 pt-3 bg-base-100">
+          <!-- Tools -->
+
+          <div
+            class="flex justify-between border-b mb-10 border-black/5 dark:border-white/5">
+            <div class="mb-3">
+              <a href="#" class="link-hover text-sm mr-5">#0001</a>
+              <span class="badge badge-info">Draft</span>
+            </div>
+            <div>
+              <a routerLink="../sub-grant-form" class="btn btn-sm mb-3 mr-2">
+                <ng-icon name="edit"></ng-icon>
+                {{ t('sys.edit') }}
+              </a>
+              <button class="btn btn-sm mb-3">
+                <ng-icon name="deleteIcon"></ng-icon>
+                {{ t('sys.delete') }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Main heading information -->
+
+          <div class="flex justify-between">
+            <div>
+              <h1 class="text-2xl font-bold mb-5 text-black dark:text-white">
+                Washington Management Center
+              </h1>
+              <div class="flex items-center mb-5">
+                <button class="btn mr-5">
+                  <div class="avatar mr-3">
+                    <div class="w-8 rounded-full">
+                      <img src="/assets/users/user.jpg" alt="User" />
+                    </div>
+                  </div>
+                  Lead by
+                  <span class="font-bold text-black dark:text-white ml-2"
+                    >Sonny Trillanes</span
+                  >
+                </button>
+                <div class="flex items-center">
+                  <div class="mr-3">Contacts</div>
+                  <div class="avatar-group -space-x-3">
+                    <div class="avatar">
+                      <div class="w-8">
+                        <img src="/assets/users/user2.jpg" alt="User" />
+                      </div>
+                    </div>
+                    <div class="avatar">
+                      <div class="w-8">
+                        <img src="/assets/users/user3.jpg" alt="User" />
+                      </div>
+                    </div>
+                    <div class="avatar">
+                      <div class="w-8">
+                        <img src="/assets/users/user4.jpg" alt="User" />
+                      </div>
+                    </div>
+                    <div class="avatar placeholder">
+                      <div class="w-8 bg-neutral-focus text-neutral-content">
+                        <span>+9</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3 flex">
+                <ng-icon name="hourGlass" size="24" class="mr-3"></ng-icon>
+                Jan 31, 2015 ~ Jan 31, 2017
+              </div>
+            </div>
+            <div class="radial-progress text-warning" style="--value: 70">
+              70%
+            </div>
+          </div>
+        </div>
+
+        <!-- Amounts -->
+
+        <div class="grid grid-cols-5">
+          <div
+            class="py-10 px-10 bg-base-100 border-r border-black/5 dark:border-white/5 text-center">
+            <p class="text-sm mb-3">Sub award amount</p>
+            <p class="text-5xl text-black dark:text-white">
+              <span class="font-bold text-success">$405</span>
+            </p>
+          </div>
+          <div
+            class="py-10 px-10 bg-base-100 border-r border-black/5 dark:border-white/5 text-center">
+            <p class="text-sm mb-3">Cost Share Amount</p>
+            <p class="text-4xl text-black dark:text-white">
+              <span class="font-bold">$6545</span>
+            </p>
+          </div>
+          <div
+            class="py-10 px-10 bg-base-100 border-r border-black/5 dark:border-white/5 text-center items-end">
+            <p class="text-sm mb-3">Ceiling amount</p>
+            <p class="text-4xl text-black dark:text-white">
+              <span class="font-bold">$3.65</span>
+            </p>
+          </div>
+          <div
+            class="py-10 px-10 bg-base-100 border-r border-black/5 dark:border-white/5 text-center">
+            <p class="text-sm mb-3">Proposed amount</p>
+            <p class="text-4xl text-black dark:text-white">
+              <span class="font-bold">$3312</span>
+            </p>
+          </div>
+          <div
+            class="py-10 px-10 bg-base-100 border-r border-black/5 dark:border-white/5 text-center">
+            <p class="text-sm mb-3">Obligated amount</p>
+            <p class="text-4xl text-black dark:text-white">
+              <span class="font-bold">$98.5</span>
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <!-- Sub grant detail -->
+
+      <div class="px-10 py-10">
+        <div class="gx tx">
+          <div>
+            <div class="border-b border-black/5 dark:border-white/5 pb-5">
+              <h1 class="text-lg text-black dark:text-white font-bold mb-2">
+                Sub grant detail
+              </h1>
+              <p class="text-sm">Sub grant details and application.</p>
+            </div>
+            <div class="border-b border-black/5 dark:border-white/5 pb-5">
+              <dl class="grid grid-cols-3">
+                <div class="py-5">
+                  <dt class="font-bold mb-2">Financial Dimension</dt>
+                  <dd>Margot Foster</dd>
+                </div>
+                <div class="py-5">
+                  <dt class="font-bold mb-2">Sub grant award name</dt>
+                  <dd>Backend Developer</dd>
+                </div>
+                <div class="py-5">
+                  <dt class="font-bold mb-2">Email address</dt>
+                  <dd>{{ 'margotfoster@example.com' }}/dd></dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Organization -->
+
+      <btp-organization />
+
+      <!-- Task -->
+
+      <btp-task />
+    </main>
+
+    <!-- Right side layout -->
+
+    <div class="w-3/12 px-10 h-[calc(100vh-10rem)] sticky top-28">
+      <div class="h-full overflow-scroll overview-scroll-invisible">
+        <div class="pb-5">
+          <btp-award-card />
+        </div>
+        <btp-acitivity />
+      </div>
+    </div>
+  </div>
+</ng-template>

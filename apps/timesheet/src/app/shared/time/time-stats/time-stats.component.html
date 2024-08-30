@@ -1,0 +1,53 @@
+<ng-template transloco let-t>
+  @if (timesheetHeader()?.ApprovedByUsername || isApproving()) {
+  <div class="stats shadow mb-5">
+    <div class="stat">
+      <div class="stat-figure text-secondary">
+        <div class="avatar items-center placeholder">
+          <div
+            class="bg-neutral text-neutral-content rounded-full w-10 mr-2 uppercase">
+            <span>{{ timesheetHeader()!.UserName?.substring(0, 2) }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="stat-title">{{ t('sys.submittedBy') }}</div>
+      <div class="stat-value">
+        {{ timesheetHeader()!.UserName }}
+      </div>
+      <div class="stat-desc">
+        <div
+          class="tooltip"
+          [attr.data-tip]="
+            timesheetHeader()!.CreatedDate
+              | date : 'short' : undefined : locale()
+          ">
+          {{ timesheetHeader()!.CreatedDate | timeAgo : locale() }}
+        </div>
+      </div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-figure">
+        <ng-icon name="time" size="30" class="mr-1"></ng-icon>
+      </div>
+      <div class="stat-title">{{ t('sys.totalHours') }}</div>
+      <div class="stat-value">
+        <span>
+          {{ timesheetHeader()!.TMTotalHours | decimalTimeFormat }}
+          hrs</span
+        >
+      </div>
+    </div>
+
+    @if (timesheetHeader()!.ApprovedBy) {
+    <div class="stat">
+      <div class="mb-3">
+        <tms-approver-remarks
+          [timesheetDetails]="timesheetHeader()"
+          [locale]="locale()"></tms-approver-remarks>
+      </div>
+    </div>
+    }
+  </div>
+  }
+</ng-template>

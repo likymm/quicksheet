@@ -1,0 +1,55 @@
+<ng-template transloco let-t>
+  <div
+    class="modal items-start pt-10"
+    [attr.open]="_open() || null"
+    (mousedown)="backdropClicked($event)">
+    @if (_open()) {
+    <div #modalBody class="modal-box" [class]="boxClass()">
+      <!-- Header -->
+
+      @if (title() && !headerTemplate) {
+      <h3 class="font-bold text-lg">
+        {{ title() }}
+      </h3>
+      }
+      <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+
+      <!-- Content -->
+
+      <ng-content></ng-content>
+
+      <div class="modal-action">
+        <form method="dialog">
+          <!-- Close button -->
+
+          <button
+            (click)="closeModal()"
+            tabindex="-1"
+            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            <ng-icon name="close" size="24" />
+          </button>
+
+          <!-- Footer action -->
+
+          <footer #modalAction>
+            @if (!footerTemplate) {
+            <button (click)="closeModal()" class="btn mr-3">
+              {{ t('sys.cancel') }}
+            </button>
+            <button
+              [disabled]="disabledOk()"
+              id="okok"
+              (click)="onOk()"
+              class="btn btn-primary focus:outline-8 focus:outline-double"
+              [ngClass]="okClass">
+              {{ t('sys.ok') }}
+            </button>
+            }
+            <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+          </footer>
+        </form>
+      </div>
+    </div>
+    }
+  </div>
+</ng-template>

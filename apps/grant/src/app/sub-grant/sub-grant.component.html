@@ -1,0 +1,33 @@
+<ng-template transloco let-t>
+  <div class="px-2 md:px-8">
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <li>
+          <a routerLink="/home">{{ t('sys.home') }}</a>
+        </li>
+        <li>{{ t('sys.subGrant') }}</li>
+      </ul>
+    </div>
+    <div class="md:flex justify-between mb-5">
+      <div class="mb-5">
+        <h1 class="text-3xl font-bold text-black dark:text-white mb-3">
+          {{ t('sys.subGrant') }}
+        </h1>
+      </div>
+      <div class="flex flex-wrap grow justify-end">
+        <input
+          type="text"
+          placeholder="Search..."
+          class="input input-md w-full max-w-xs mr-3" />
+        <a routerLink="sub-grant-form" class="btn btn-primary">{{
+          t('sys.addSubGrant')
+        }}</a>
+      </div>
+    </div>
+    <div class="card bg-white dark:bg-base-100">
+      <div class="card-body">
+        <btp-table />
+      </div>
+    </div>
+  </div>
+</ng-template>

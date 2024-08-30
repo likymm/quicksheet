@@ -1,0 +1,21 @@
+<ng-template transloco let-t>
+  <div class="px-2 md:px-8">
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <li>
+          {{ t('sys.expenses') }}
+        </li>
+      </ul>
+    </div>
+    <h1 class="text-3xl font-bold text-black dark:text-white mb-3">
+      {{ t('sys.expenses') }}
+    </h1>
+    <div class="card bg-white dark:bg-base-100">
+      <div class="card-body">
+        <div>
+          <div id="pspdfkit" class="w-full h-[calc(100vh-300px)]"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

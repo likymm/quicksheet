@@ -1,0 +1,3 @@
+.overview-scroll-invisible::-webkit-scrollbar {
+  display: none;
+}

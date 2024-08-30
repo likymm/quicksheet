@@ -1,0 +1,27 @@
+<ng-template transloco let-t>
+  <kendo-grid [data]="gridData">
+    <kendo-grid-column field="SubGrantee" title="Sub Grantee">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <a routerLink="profile" class="!link font-bold">{{
+          dataItem.SubGrantee
+        }}</a>
+        <p class="opacity-40">
+          {{ dataItem.Id }}
+        </p>
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="SubGranteeAwardName" title="Award Name">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <p>{{ dataItem.SubGranteeAwardName }}</p>
+        <p class="opacity-40">
+          {{ dataItem.SubGranteeAwardNumber }}
+        </p>
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column title="Controls">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <a routerLink="sub-grant-form" class="!link">Edit</a>
+      </ng-template>
+    </kendo-grid-column>
+  </kendo-grid>
+</ng-template>

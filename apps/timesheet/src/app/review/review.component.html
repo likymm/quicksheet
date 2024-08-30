@@ -1,0 +1,188 @@
+<ng-template transloco let-t>
+  <div class="px-2 md:px-8">
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <li>
+          <a routerLink="/home">{{ t('sys.home') }}</a>
+        </li>
+        <li>
+          {{ t('sys.review') }}
+        </li>
+      </ul>
+    </div>
+
+    <div class="md:flex justify-between mb-5">
+      <div class="mb-5">
+        <h1 class="text-3xl font-bold text-black dark:text-white">
+          {{ t('sys.review') }}
+        </h1>
+      </div>
+    </div>
+    <div class="card bg-white dark:bg-base-100">
+      <div class="card-body">
+        <div>
+          <ul
+            class="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box mb-2">
+            @for (item of statusFilter; track item) {
+
+            <li>
+              <a
+                [ngClass]="{ 'dark:bg-gray-700 bg-white': item === status() }"
+                class="mr-2"
+                (click)="status.set(item)"
+                >{{ item }}</a
+              >
+            </li>
+            }
+          </ul>
+        </div>
+        @if(timesheetHeaders()?.isLoading) {
+
+        <div class="grid grid-cols-5 gap-4 w-full">
+          @for (item of [].constructor(30); track $index) {
+          <div class="skeleton h-14 w-full"></div>
+          }
+        </div>
+        } @else if (timesheets().length) {
+        <div
+          class="animate-fade animate-once animate-duration-1000 animate-ease-linear">
+          <kendo-grid
+            [kendoGridBinding]="timesheets()"
+            [pageable]="true"
+            [pageSize]="10"
+            [sortable]="true">
+            <kendo-grid-column
+              field="TMHeaderCode"
+              [title]="t('sys.headerCode')">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                <a
+                  routerLink="/time/date"
+                  [queryParams]="{ id: dataItem.TMHeaderID, approving: 1 }"
+                  class="!link font-bold">
+                  {{ dataItem.TMHeaderCode }}
+                </a>
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column
+              [title]="t('sys.duration')"
+              field="TMPeriodStartDate">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                {{
+                  dataItem.TMPeriodStartDate
+                    | date : 'mediumDate' : undefined : locale.currentLocale()
+                }}
+                -
+                {{
+                  dataItem.TMPeriodEndDate
+                    | date : 'mediumDate' : undefined : locale.currentLocale()
+                }}
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column
+              field="TMTotalHours"
+              [title]="t('sys.totalHours')">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                <p>{{ dataItem.TMTotalHours | decimalTimeFormat }} hrs</p>
+                <progress
+                  class="progress !w-20"
+                  [attr.value]="dataItem.TMTotalHours"
+                  max="40"></progress>
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="UserName" [title]="t('sys.user')">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                <div class="avatar items-center placeholder">
+                  <div
+                    class="bg-neutral text-neutral-content rounded-full w-10 mr-2 uppercase">
+                    <span>{{ dataItem.UserName.substring(0, 2) }}</span>
+                  </div>
+                  <span>{{ dataItem.UserName }}</span>
+                </div>
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="Status" [title]="t('sys.status')">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                <span
+                  class="badge badge-outline"
+                  [class]="dataItem!.Status | statusBG"
+                  >{{ dataItem.Status }}</span
+                >
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column>
+              <ng-template kendoGridCellTemplate let-dataItem>
+                <div class="join">
+                  @if (dataItem.Status === statusEnum.Reviewing) {
+                  <button
+                    (click)="onApproved(dataItem.TMHeaderID)"
+                    type="button"
+                    class="btn btn-neutral btn-sm join-item">
+                    <ng-icon
+                      name="check"
+                      size="24"
+                      class="text-primary"></ng-icon>
+                    {{ t('sys.approve') }}
+                  </button>
+                  <button
+                    (click)="onReject(dataItem.TMHeaderID)"
+                    type="button"
+                    class="btn btn-neutral btn-sm join-item">
+                    <ng-icon
+                      name="arrowBack"
+                      size="24"
+                      class="text-primary"></ng-icon>
+                    {{ t('sys.return') }}
+                  </button>
+                  } @else {
+                  <button
+                    (click)="onStartReview(dataItem)"
+                    type="button"
+                    class="btn btn-neutral btn-sm join-item">
+                    <ng-icon
+                      name="review"
+                      size="24"
+                      class="text-primary"></ng-icon>
+                    {{ t('sys.startReview') }}
+                  </button>
+                  }
+                </div>
+              </ng-template>
+            </kendo-grid-column>
+          </kendo-grid>
+        </div>
+        } @else {
+        <div class="py-20 text-center">
+          <img
+            src="../../../../assets/svg/coffee.svg"
+            alt="calendar"
+            class="max-w-sm mx-auto mb-10" />
+          <h5 class="text-lg font-bold text-black dark:text-white mb-3">
+            {{ t('msg.reviewTitle') }}
+          </h5>
+          <p>
+            {{ t('msg.reviewBody') }}
+          </p>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <btp-modal
+    [open]="isReturnModalOpen()"
+    boxClass="max-w-2xl"
+    (openChange)="isReturnModalOpen.set($event)"
+    [title]="t('sys.rejectTimesheet')"
+    (ok)="onConfirmReturn()">
+    <label class="form-control w-full">
+      <div class="label">
+        <span class="label-text">{{ t('sys.remarks') }}</span>
+      </div>
+      <textarea
+        [formControl]="remarksInput"
+        type="text"
+        class="textarea textarea-bordered"
+        rows="3"></textarea>
+    </label>
+  </btp-modal>
+</ng-template>

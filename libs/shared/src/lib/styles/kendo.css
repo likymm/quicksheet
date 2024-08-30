@@ -1,0 +1,24 @@
+@import '@progress/kendo-theme-default/dist/all.css';
+
+.k-grid,
+.k-table,
+.k-data-table,
+.k-grid-header,
+.k-grouping-header,
+.k-grid-add-row,
+.k-grid-footer,
+.k-table-thead,
+.k-table-header,
+.k-table-group-sticky-header,
+.k-grid-content,
+.k-pager,
+.k-grid-header .k-sort-icon,
+.k-grid-header .k-sort-order {
+  color: inherit;
+  background-color: transparent !important;
+}
+
+.k-grid .k-table-tbody > .k-table-row:not(.k-detail-row):hover,
+.k-grid .k-table-tbody > .k-table-row:not(.k-detail-row).k-hover {
+  @apply dark:bg-gray-500/5 transition-colors;
+}

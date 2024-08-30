@@ -1,0 +1,6 @@
+{
+  "$schema": "node_modules/ng-openapi-gen/ng-openapi-gen-schema.json",
+  "input": "https://btptime.azurewebsites.net/swagger/v1.0/swagger.json",
+  "output": "libs/data-services/src/api/gen/timesheet",
+  "ignoreUnusedModels": false
+}

@@ -1,0 +1,191 @@
+<ng-template transloco let-t>
+  @if (timesheetDetail().LineItemStatus) {
+  <div
+    class="badge mb-3"
+    class="badge badge-outline"
+    [class]="timesheetDetail().LineItemStatus | statusBG">
+    {{ timesheetDetail().LineItemStatus }}
+  </div>
+  }
+  <!--  -->
+
+  @if (timesheetDetail().TMDetailID) {
+  <div class="text-2xl font-bold flex items-center space-x-2">
+    <!--  -->
+
+    @if (!isEditingTime()) {
+    <div
+      (click)="onHourClick()"
+      class="rounded px-1 my-2"
+      [ngClass]="{
+        'pointer-events-none': isFormDisabled(),
+        'hover:outline hover:outline-primary hover:outline-2 cursor-pointer':
+          !isFormDisabled()
+      }">
+      {{ timesheetDetail().Hours | decimalTimeFormat }}
+    </div>
+    }
+
+    <!--  -->
+    @if (isEditingTime()) {
+    <input
+      #gridEditingHour
+      [value]="timesheetDetail().Hours"
+      (blur)="onChangeHour($event, timesheetDetail())"
+      type="number"
+      class="input input-bordered text-xl w-24"
+      max="24"
+      min="1" />
+    }
+
+    <!--  -->
+    @if (timesheetDetail().BillingType) {
+    <div class="dropdown">
+      <div
+        [attr.tabindex]="isFormDisabled() ? null : 0"
+        role="button"
+        class="badge badge-ghost"
+        [ngClass]="{
+          'pointer-events-none': isFormDisabled(),
+          'hover:outline hover:outline-primary hover:outline-2 cursor-pointer':
+            !isFormDisabled()
+        }">
+        {{ getBillingTypeName(timesheetDetail().BillingType) }}
+      </div>
+      <ul
+        tabindex="0"
+        class="p-2 shadow-2xl menu dropdown-content z-[1] bg-base-100 rounded-box w-52">
+        @for (item of billingTypes(); track item.BillingType) {
+        <li>
+          <a
+            (click)="onChangeBillingType(item.BillingType, timesheetDetail())"
+            class="font-normal flex justify-between">
+            <span>{{ item.BillingTypeName }}</span>
+            @if (item.BillingType === timesheetDetail().BillingType) {
+            <ng-icon name="check" size="20"></ng-icon>
+            }
+          </a>
+        </li>
+        }
+      </ul>
+    </div>
+    }
+  </div>
+  }
+  <!--  -->
+  @if (timesheetDetail().TMDetailID) {
+  <div
+    class="relative mb-3 -mx-1 rounded-sm"
+    [ngClass]="{
+      ' hover:bg-black/10 group/billing-notes': !isFormDisabled()
+    }">
+    @if (!isEditingNotes()) {
+    <div
+      class="tooltip absolute top-1 right-1 invisible group-hover/billing-notes:!visible"
+      [attr.data-tip]="t('sys.edit')">
+      <button
+        (click)="onInlineEditTimesheetDetail()"
+        type="button"
+        class="btn btn-xs">
+        <ng-icon name="pencil" class="text-2xl"></ng-icon>
+      </button>
+    </div>
+    }
+    <!-- -->
+    @if (isEditingNotes()) {
+    <textarea
+      #inlineEditTimesheetDetail
+      class="textarea textarea-bordered w-full textarea-xs p-1 line leading-4"
+      rows="5"
+      [value]="timesheetDetail().BillingNotes"
+      (blur)="onBlurInlineEdit($event, timesheetDetail())"></textarea>
+    } @else {
+    <p
+      class="whitespace-pre-line p-1 min-h-8"
+      (dblclick)="onInlineEditTimesheetDetail()">
+      {{ timesheetDetail().BillingNotes }}
+    </p>
+    }
+  </div>
+  }
+  <!--  -->
+  @if (timesheetDetail().ApprovedByUsername) {
+  <div class="mb-3">
+    <tms-approver-remarks
+      [timesheetDetails]="timesheetDetail()"
+      [locale]="locale()"></tms-approver-remarks>
+  </div>
+  }
+  <!--  -->
+  <div
+    class="mb-3 invisible group-hover:visible absolute bottom-0 left-0 right-0 flex justify-center space-x-3 w-full">
+    @if (timesheetDetail().TMDetailID) {
+    <!---->
+    @if (isApproving()) {
+    <div class="tooltip" [attr.data-tip]="t('sys.approve')">
+      <button
+        (click)="onApproved(timesheetDetail())"
+        [attr.aria-label]="t('sys.approve')"
+        type="button"
+        class="btn btn-primary mr-1"
+        [disabled]="isSaving() || isFetching() || isDeleting()">
+        <ng-icon name="check" class="text-2xl"></ng-icon>
+      </button>
+    </div>
+    <div class="tooltip" [attr.data-tip]="t('sys.return')">
+      <button
+        (click)="onReject(timesheetDetail())"
+        [attr.aria-label]="t('sys.return')"
+        type="button"
+        class="btn"
+        [disabled]="isSaving() || isFetching() || isDeleting()">
+        <ng-icon name="close" class="text-2xl" size="24"></ng-icon>
+      </button>
+    </div>
+    <!---->
+    } @else if (!isFormDisabled()) {
+    <div class="tooltip" [attr.data-tip]="t('sys.edit')">
+      <button
+        (click)="onEditTimesheetDetail(timesheetDetail())"
+        [attr.aria-label]="t('sys.edit')"
+        type="button"
+        class="btn btn-primary mr-1"
+        [disabled]="isSaving() || isFetching() || isDeleting()">
+        <ng-icon name="pencil" class="text-2xl" size="24"></ng-icon>
+      </button>
+    </div>
+    <div class="tooltip" [attr.data-tip]="t('sys.delete')">
+      <button
+        (click)="onDeleteTimehseetDetail(timesheetDetail())"
+        [attr.aria-label]="t('sys.delete')"
+        type="button"
+        class="btn"
+        [disabled]="isSaving() || isFetching()">
+        <ng-icon name="deleteBin" class="text-2xl"></ng-icon>
+      </button>
+    </div>
+    }
+    <!---->
+    }
+
+    <!---->
+    @if (!timesheetDetail().TMDetailID && !isFormDisabled() && !isApproving()) {
+    <div class="tooltip" [attr.data-tip]="t('sys.add')">
+      <button
+        (click)="onAddProject(timesheetDetail())"
+        type="button"
+        class="btn btn-primary"
+        [disabled]="isSaving() || isFetching()">
+        @if (isSaving() || isFetching()) {
+        <ng-icon
+          name="loader"
+          class="text-2xl animate-spin"
+          size="24"></ng-icon>
+        } @else {
+        <ng-icon name="add" class="text-2xl" size="24"></ng-icon>
+        }
+      </button>
+    </div>
+    }
+  </div>
+</ng-template>

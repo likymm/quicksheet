@@ -1,0 +1,26 @@
+@for (item of form(); track item.field) {
+
+<!---->
+@if (item.type === inputType.group && item.children?.length) {
+<btp-group
+  [form]="item"
+  [isShowMore]="isShowMore()"
+  [formOptions]="formOptions()"
+  [markAsPristineCount]="markAsPristineCount()"
+  [resetCount]="resetCount()"
+  [isDisabled]="isDisabled()"
+  (valueChange)="onValueChange($event)"
+  (isValidChange)="onIsValidChange($event)" />
+} @else if (!item.inShowMore || isShowMore()) {
+<btp-input
+  [input]="item"
+  [options]="getOptions(item.field)"
+  [markAsPristineCount]="markAsPristineCount()"
+  [resetCount]="resetCount()"
+  [isDisabled]="isDisabled()"
+  (valueChange)="onValueChange($event)"
+  (isValidChange)="onIsValidChange($event)" />
+}
+
+<!---->
+}
