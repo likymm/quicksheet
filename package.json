@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "timesheet-gen": "ng-openapi-gen --config libs/data-services/src/api/timesheet-api-config.json",
-    "build:timesheet": "npx nx run timesheet:build"
+    "build:timesheet": "npm run timesheet-gen && nx run timesheet:build"
   },
   "private": true,
   "dependencies": {
